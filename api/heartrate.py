@@ -11,11 +11,11 @@ api = Api(pulse_api)
 
 CORS(pulse_api)
 
-class CountyDataAPI:
+class PulseAPI:
     class _Read(Resource):
         def get(self):
             app_root = os.path.dirname(os.path.abspath(__file__))
-            csv_path = os.path.join(app_root, 'county.csv')  # Update the CSV file name
+            csv_path = os.path.join(app_root, 'pulse.csv')  # Update the CSV file name
             data = pd.read_csv(csv_path)
             if data.empty:
                 return jsonify({"error": "Data not available"}), 404
@@ -26,22 +26,22 @@ class CountyDataAPI:
             # You can handle the creation of a new entry here if needed
             pass
 
-    class _CountyData(Resource):
-        def get(self, county_name):
+    class _PulseData(Resource):
+        def get(self, pulse_name):
             app_root = os.path.dirname(os.path.abspath(__file__))
-            csv_path = os.path.join(app_root, 'county.csv')  # Update the CSV file name
+            csv_path = os.path.join(app_root, 'pulse.csv')  # Update the CSV file name
             data = pd.read_csv(csv_path)
-            county_data = data[(data['County'] == county_name) & (data['Year'] == 2022)]  # Filter data for the specified county and year
-            if county_data.empty:
+            pulse_data = data[(data['Pulse'] == pulse_name) & (data['Year'] == 2022)]  # Filter data for the specified county and year
+            if pulse_data.empty:
                 return jsonify({"error": "County data not found"}), 404
-            result = county_data.to_dict(orient='records')[0]
+            result = pulse_data.to_dict(orient='records')[0]
             return jsonify(result)
 
-api.add_resource(CountyDataAPI._Read, '/')
-api.add_resource(CountyDataAPI._Create, '/create')
-api.add_resource(CountyDataAPI._CountyData, '/county/<string:county_name>')
+api.add_resource(PulseAPI._Read, '/')
+api.add_resource(PulseAPI._Create, '/create')
+api.add_resource(PulseAPI._PulseData, '/pulse/<string:pulse_name>')
 
-app.register_blueprint(county_api)
+app.register_blueprint(pulse_api)
 
 if __name__ == "__main__":
     app.run(debug=True)
