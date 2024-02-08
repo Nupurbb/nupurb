@@ -8,7 +8,7 @@ from flask_restful import Api, Resource  # Import Api and Resource
 app = Flask(__name__)
 
 # Create a blueprint for the API
-sleep_api = Blueprint('sleep_api', __name__, url_prefix='/api/sleep')
+sleep_api = Blueprint('sleep_api', __name__, url_prefix='/sleep')
 api_sleep = Api(sleep_api)
 
 CORS(sleep_api)
@@ -17,7 +17,7 @@ class SleepDataAPI(Resource):
     def get(self):
         # Get the path to the sleep database
         app_root = os.path.dirname(os.path.abspath(__file__))
-        csv_path = os.path.join(app_root, 'api', 'sleep.csv')
+        csv_path = os.path.join(app_root, 'sleep.csv')
         print("App Root:", app_root)
         print("CSV Path:", csv_path)
         
