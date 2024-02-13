@@ -1,0 +1,27 @@
+[
+    {
+      "age": 30,
+      "finessname":"hi",    
+      "weight": 70.5,
+      "height": 175,
+      "gender": "male",
+      "activity_level": "active"
+    },
+    {
+      "age": 25,
+      "finessname":"h", 
+      "weight": 65.2,
+      "height": 162,
+      "gender": "female",
+      "activity_level": "sedentary"
+    },
+    {
+      "age": 40,
+      "finessname":"huu", 
+      "weight": 80.8,
+      "height": 180,
+      "gender": "male",
+      "activity_level": "moderate"
+    }
+  ]
+  
