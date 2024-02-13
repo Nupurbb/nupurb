@@ -14,8 +14,7 @@ api = Api(drink_api)
 
 class DrinkyAPI:        
     class _CRUD(Resource):  # User API operation for Create, Read.  THe Update, Delete methods need to be implemeented
-        @token_required
-        def post(self, current_user): # Create method
+        def post(self): # Create method
             ''' Read data for json body '''
             body = request.get_json()
             
@@ -41,20 +40,77 @@ class DrinkyAPI:
                 return jsonify(just_added_drink.read())
             # failure returns error
             return {'message': f'Processed {drinkName}, either a format error or it is duplicate'}, 400
-
-        def get(self, current_user, lname=None):  # Updated method with lname parameter
+    
+        def get(self): # Read Method
+            drinks = Drink.query.all()    # read/extract all users from the database
+            json_ready = [drink.read() for drink in drinks]  # prepare output in json
+            return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
+        
+        def delete(self):  # Delete method
+            ''' Find user by ID '''
+            body = request.get_json()
+            del_drink = body.get('drinkName')
+            result = Drink.query.filter(Drink._drinkName == del_drink).first()
+            if result is None:
+                 return {'message': f'drink {del_drink} not found'}, 404
+            else:
+                result.delete()
+                print("delete")
+            
+           # del_found = Drink.query.get(del_drink)
+            # print(del_found)
+            # if del_found is None:
+            #     return {'message': f'drink {del_drink} not found'}, 404
+            # else:
+            #     del_found.delete()
+    
+    
+    class _get(Resource):
+        
+        def get(self, lname=None):  # Updated method with lname parameter
+            #lname="'" + lname + "'"
+            print(lname)
             if lname:
-                drinkName = Drink.query.filter_by(lname=lname).first()  # Adjust this based on your model attributes
-                if drinkName:
-                    return jsonify(drinkName.read())  # Assuming you have a read() method in your DrinkyApi model
+                result = Drink.query.filter_by(_drinkName=lname).first()
+                #result = Drink.query.filter(Drink._drinkName == lname).first()
+                #result = Drink.query.first_or_404(lname)  # Adjust this based on your model attributes
+                print(result)
+                if result:
+                    print(result)
+                    return jsonify([result.read()])  # Assuming you have a read() method in your DrinkyApi model
                 else:
                     return jsonify({"message": "Drink not found"}), 404
-            else:
-                drinks = Drink.query.all()    # read/extract all users from the database
-                json_ready = [drink.read() for drink in drinks]  # prepare output in json
-                return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
+    
+    # class _update(Resource):
+    #     def put(self, id):  # Update method
+    #         ''' Read data for json body '''
+    #         body = request.get_json()
 
+    #         ''' Find user by ID '''
+    #         user = User.query.get(id)
+    #         if user is None:
+    #             return {'message': f'User with ID {id} not found'}, 404
+
+    #         ''' Update fields '''
+    #         name = body.get('name')
+    #         if name:
+    #             user.name = name
+                
+    #         uid = body.get('uid')
+    #         if uid:  
+    #             user.uid = uid
+                
+    #         user.server_needed = body.get('server_needed')
+
+    #         user.active_classes = body.get('active_classes')
+    #         user.archived_classes = body.get('archived_classes')
+
+    #         ''' Commit changes to the database '''
+    #         user.update()
+    #         return jsonify(user.read())
+    
    
+  
     # class _Security(Resource):
     #     def post(self):
     #         try:
@@ -113,6 +169,7 @@ class DrinkyAPI:
             
     # building RESTapi endpoint
     api.add_resource(_CRUD, '/')
+    api.add_resource(_get, '/<string:lname>')
     #api.add_resource(_Security, '/authenticate')
     
     
