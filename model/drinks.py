@@ -113,7 +113,7 @@ def initDrinks():
             print("failed")
 
         for item in data:
-            print(item)
+            # print(item)
             d_toadd = Drink(drinkName=item['drinkName'], calories=item['calories'])
             drinkstoadd.append(d_toadd)
 
