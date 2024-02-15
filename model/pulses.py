@@ -131,7 +131,7 @@ try:
 except Exception as e:
     print("Failed to read from CSV:", e)
 
-for item in data:
+for item in date:
             # print(item)
             p_toadd = Pulse(Active=item['Active'], Exercise=item['Exercise'])
             pulsestoadd.append(p_toadd)

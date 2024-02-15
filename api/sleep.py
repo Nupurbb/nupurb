@@ -1,82 +1,53 @@
-from flask import Flask, Blueprint, jsonify, request
-import pandas as pd
-from flask_cors import CORS
-import os
-from flask_restful import Api, Resource
+from flask import Blueprint, jsonify, request
+from model.sleeps import Sleep
 
-# Create a single Flask application
-app = Flask(__name__)
+sleep_api = Blueprint('sleep_api', __name__)
 
-# Create a blueprint for the API
-sleep_api = Blueprint('sleep_api', __name__, url_prefix='/sleep')
-api_sleep = Api(sleep_api)
+# Endpoint to get all sleep data
+@sleep_api.route('/sleep', methods=['GET'])
+def get_all_sleep():
+    sleeps = Sleep.read_all()
+    sleep_list = []
+    for sleep in sleeps:
+        sleep_dict = {
+            'id': sleep.id,
+            'gender': sleep.gender,
+            'age': sleep.age,
+            'occupation': sleep.occupation,
+            'sleep_duration': sleep.sleep_duration,
+            'quality_of_sleep': sleep.quality_of_sleep,
+            'physical_activity_level': sleep.physical_activity_level,
+            'stress_level': sleep.stress_level,
+            'bmi_category': sleep.bmi_category,
+            'blood_pressure': sleep.blood_pressure,
+            'heart_rate': sleep.heart_rate,
+            'daily_steps': sleep.daily_steps,
+            'sleep_disorder': sleep.sleep_disorder
+        }
+        sleep_list.append(sleep_dict)
+    return jsonify({'sleeps': sleep_list})
 
-# Enable CORS for the sleep_api blueprint
-CORS(sleep_api)
-
-class SleepDataAPI(Resource):
-    def get(self):
-        # Get the path to the sleep database
-        app_root = os.path.dirname(os.path.abspath(__file__))
-        csv_path = os.path.join(app_root, 'sleep.csv')
-        
-        try:
-            data_sleep = pd.read_csv(csv_path)
-            
-            # Define default values for missing fields
-            defaults = {
-                'Occupation': 'Unknown',
-                'Sleep Disorder': 'None'
-            }
-            
-            # Fill missing fields with default values
-            data_sleep = data_sleep.fillna(defaults)
-        except FileNotFoundError:
-            return {"error": "File not found"}, 404
-
-        if data_sleep.empty:
-            return jsonify({"error": "Data not available"}), 404
-
-        return jsonify(data_sleep.to_dict(orient='records'))
-
-    def post(self):
-        # Get the sleep duration from the request
-        sleep_duration = request.args.get('duration')  # Use args instead of json for GET requests
-
-        # Get the path to the sleep database
-        app_root = os.path.dirname(os.path.abspath(__file__))
-        csv_path = os.path.join(app_root, 'sleep.csv')
-
-        try:
-            data_sleep = pd.read_csv(csv_path)
-            
-            # Define default values for missing fields
-            defaults = {
-                'Occupation': 'Unknown',
-                'Sleep Disorder': 'None'
-            }
-            
-            # Fill missing fields with default values
-            data_sleep = data_sleep.fillna(defaults)
-        except FileNotFoundError:
-            return {"error": "File not found"}, 404
-
-        if data_sleep.empty:
-            return jsonify({"error": "Data not available"}), 404
-
-        # Filter data based on sleep duration
-        filtered_data = data_sleep[data_sleep['Sleep Duration'] == float(sleep_duration)]
-
-        if filtered_data.empty:
-            return jsonify({"error": "Sleep duration not found"}), 404  # Return error if sleep duration not found
-
-        return jsonify(filtered_data.to_dict(orient='records'))
-
-# Register the resources with the api_sleep object
-api_sleep.add_resource(SleepDataAPI, '/')
-
-# Register the blueprint with the Flask app
-app.register_blueprint(sleep_api)
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+# Endpoint to create a new sleep entry
+@sleep_api.route('/sleep', methods=['POST'])
+def create_sleep():
+    data = request.get_json()
+    sleep = Sleep(
+        data['id'],
+        data['gender'],
+        data['age'],
+        data['occupation'],
+        data['sleep_duration'],
+        data['quality_of_sleep'],
+        data['physical_activity_level'],
+        data['stress_level'],
+        data['bmi_category'],
+        data['blood_pressure'],
+        data['heart_rate'],
+        data['daily_steps'],
+        data['sleep_disorder']
+    )
+    try:
+        sleep.create()
+        return jsonify({'message': 'Sleep entry created successfully'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400

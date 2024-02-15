@@ -15,12 +15,14 @@ from api.player import player_api
 from api.drink import drink_api
 from api.fitness import fitness_api
 from api.pulse import pulse_api
+from api.sleep import sleep_api
 # database migrations
 from model.users import initUsers
 from model.players import initPlayers
 from model.drinks import initDrinks
 from model.fitnessy import initFitnessy
 from model.pulses import initPulses 
+from model.sleeps import init_sleep
 
 # setup App pages
 from projects.projects import app_projects # Blueprint directory import projects definition
@@ -36,6 +38,7 @@ app.register_blueprint(app_projects) # register app pages
 app.register_blueprint(drink_api)
 app.register_blueprint(fitness_api)
 app.register_blueprint(pulse_api)
+app.register_blueprint(sleep_api)
 @app.errorhandler(404)  # catch for URL not found
 def page_not_found(e):
     # note that we set the 404 status explicitly
@@ -67,6 +70,7 @@ def generate_data():
     initFitnessy()
     initDrinks()
     initPulses()
+    init_sleep()
     
 
 # Register the custom command group with the Flask application
