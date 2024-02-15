@@ -103,10 +103,8 @@ def initPulses():
              """Create database and tables"""
              db.create_all()
              """Tester data for table"""
-              #d1 = Pulse(Active='97', Exercise=1)
-           #d2 = Pulse(Active='82', Exercise=3)
-
-import csv
+d1 = Pulse(Active='97', Exercise=1)
+d2 = Pulse(Active='82', Exercise=3)
 
 # Define lists to store data for each column
 active_data = []
@@ -116,25 +114,20 @@ sex_data = []
 exercise_data = []
 height_data = []
 weight_data = []
-
 try:
     with open('pulse.csv', 'r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
-            active_data.append(int(row['Active']))
-            rest_data.append(int(row['Rest']))
-            smoke_data.append(int(row['Smoke']))
-            sex_data.append(int(row['Sex']))
-            exercise_data.append(int(row['Exercise']))
-            height_data.append(int(row['Hgt']))
-            weight_data.append(int(row['Wgt']))
-except Exception as e:
-    print("Failed to read from CSV:", e)
-
-for item in date:
-            # print(item)
-            p_toadd = Pulse(Active=item['Active'], Exercise=item['Exercise'])
+            p_toadd = Pulse(Active=row['Active'], Exercise=int(row['Exercise']))
             pulsestoadd.append(p_toadd)
+except FileNotFoundError:
+    print("File not found: pulse.csv")
+except Exception as e:
+    print("Error reading CSV file:", e)
+
+for row in csv_reader:
+    p_toadd = Pulse(Active=row['Active'], Exercise=int(row['Exercise']))
+    pulsestoadd.append(p_toadd)
 
 """Builds sample user/note(s) data"""
 for p in pulsestoadd:
