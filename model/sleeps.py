@@ -234,7 +234,7 @@ def init_sleep():
         )
     ''')
 
-    with open(' sleep.csv', 'r', newline='') as csv_file: 
+    with open('sleep.csv', 'r', newline='') as csv_file: 
         reader = csv.DictReader(csv_file)
         for row in reader:
             sleep = Sleep(
