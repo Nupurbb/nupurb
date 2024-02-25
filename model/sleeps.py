@@ -9,7 +9,7 @@ import csv
 import sqlite3
 
 # Define the Sleep class to represent the 'sleep' table in the database
-class Sleep:
+class Sleep():
     def __init__(self, id, gender, age, occupation, sleep_duration, quality_of_sleep, physical_activity_level, stress_level, bmi_category, blood_pressure, heart_rate, daily_steps, sleep_disorder):
         self._id = id
         self._gender = gender
@@ -238,7 +238,7 @@ def init_sleep():
         reader = csv.DictReader(csv_file)
         for row in reader:
             sleep = Sleep(
-                int(row['ID']),
+                int(row['Person ID']),
                 row['Gender'],
                 int(row['Age']),
                 row['Occupation'],
