@@ -19,7 +19,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 class Drink(db.Model):
     __tablename__ = 'drinks'  # table name is plural, class name is singular
 
-    # Define the Drink schema with "vars" from object
+    # Define the Drink schema with "vars" from object! Javascript!
     _drinkName = db.Column(db.String(255), primary_key=True)
     _calories = db.Column(db.Integer, unique=False, nullable=False)
 
