@@ -258,4 +258,4 @@ def init_sleep():
     conn.close()
 
 # Call the function to initialize the sleep table with data from the CSV file
-init_sleep()
+# init_sleep()
