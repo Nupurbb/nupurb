@@ -56,6 +56,7 @@ class Drink(db.Model):
 
     # CRUD create/add a new record to the table
     # returns self or None on error
+    #CREATE
     def create(self):
         try:
             # creates a drink object from Drink(db.Model) class, passes initializers
