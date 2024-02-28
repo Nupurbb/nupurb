@@ -45,8 +45,8 @@ class Pulse(db.Model):
     # returns self or None on error
     def create(self):
         try:
-            # creates a drink object from Drink(db.Model) class, passes initializers
-            db.session.add(self)  # add prepares to persist drink object to drinks table
+            # creates a pulse object from Pulse(db.Model) class, passes initializers
+            db.session.add(self)  # add prepares to persist drink object to pulses table
             db.session.commit()  # SqlAlchemy "unit of work pattern" requires a manual commit
             return self
         except IntegrityError:
