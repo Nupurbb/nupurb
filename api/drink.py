@@ -2,7 +2,7 @@ import json, jwt
 from flask import Blueprint, request, jsonify, current_app, Response
 from flask_restful import Api, Resource # used for REST API building
 from datetime import datetime
-from auth_middleware import token_required
+#from auth_middleware import token_required
 
 from model.drinks import Drink
 
@@ -47,7 +47,6 @@ class DrinkyAPI:
             return jsonify(json_ready)  # jsonify creates Flask response object, more specific to APIs than json.dumps
         
         def delete(self):  # Delete method
-            ''' Find user by ID '''
             body = request.get_json()
             del_drink = body.get('drinkName')
             result = Drink.query.filter(Drink._drinkName == del_drink).first()
