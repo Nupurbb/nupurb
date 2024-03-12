@@ -9,70 +9,78 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Fitness(db.Model):
-    __tablename__ = 'fitness'
+    __tablename__ = 'fitness_activities'
+    _Activity = db.Column(db.String(255), primary_key=True)
+    _CaloriesBurned = db.Column(db.Integer, unique=False, nullable=False)
 
-    _id = db.Column(db.Integer, primary_key=True)
-    _name = db.Column(db.String(255), nullable=False)
-    _age = db.Column(db.Integer, nullable=False)
-    _weight = db.Column(db.Float, nullable=False)
-    _height = db.Column(db.Float, nullable=False)
-    _gender = db.Column(db.String(10), nullable=False)
-    _activity_level = db.Column(db.String(20), nullable=False)
-
-    def __init__(self, name, age, weight, height, gender, activity_level):
-        self._name = name
-        self._age = age
-        self._weight = weight
-        self._height = height
-        self._gender = gender
-        self._activity_level = activity_level
+    def __init__(self, Activity, CaloriesBurned):
+        self._Activity = Activity
+        self._CaloriesBurned = CaloriesBurned
 
     @property
-    def name(self):
-        return self._name
+    def Activity(self):
+        return self._Activity
+
+    @Activity.setter
+    def Activity(self, Activity):
+        self._Activity = Activity
 
     @property
-    def age(self):
-        return self._age
+    def CaloriesBurned(self):
+        return self._CaloriesBurned
 
-    @property
-    def weight(self):
-        return self._weight
+    @CaloriesBurned.setter
+    def CaloriesBurned(self, CaloriesBurned):
+        self._CaloriesBurned = CaloriesBurned
 
-    @property
-    def height(self):
-        return self._height
+    def __str__(self):
+        return json.dumps(self.read())
 
-    @property
-    def gender(self):
-        return self._gender
-
-    @property
-    def activity_level(self):
-        return self._activity_level
-
-    def serialize(self):
-        return {
-            "name": self._name,
-            "age": self._age,
-            "weight": self._weight,
-            "height": self._height,
-            "gender": self._gender,
-            "activity_level": self._activity_level
-        }
-
-    def save(self):
+    def create(self):
         try:
             db.session.add(self)
             db.session.commit()
-            return True
+            return self
         except IntegrityError:
-            db.session.rollback()
-            return False
+            db.session.remove()
+            return None
 
-def initFitnessy():
+    def read(self):
+        return {
+            "Activity": self.Activity,
+            "CaloriesBurned": self.CaloriesBurned
+        }
+
+    def update(self, Activity="", CaloriesBurned=0):
+        if len(Activity) > 0:
+            self.Activity = Activity
+        if CaloriesBurned >= 0:
+            self.CaloriesBurned = CaloriesBurned
+        db.session.commit()
+        return self
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+def initfitnessy():
     with app.app_context():
         db.create_all()
-        # Add initialization data if needed
+        activities_to_add = []
+        try:
+            with open(r'fitness_activities.json', 'r') as json_file:
+                data = json.load(json_file)
+        except Exception as error:
+            print("failed")
+        for item in data:
+            activity_to_add = Fitness(Activity=item['Activity'], CaloriesBurned=item['CaloriesBurned'])
+            activities_to_add.append(activity_to_add)
+        for activity in activities_to_add:
+            try:
+                activity.create()
+            except IntegrityError:
+                db.session.remove()
+                print(f"Records exist, duplicate activity, or error: {activity}")
 
+initfitnessy()
 

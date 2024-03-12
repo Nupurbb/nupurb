@@ -1,66 +1,57 @@
-import json
+import json, jwt
 from flask import Blueprint, request, jsonify, current_app, Response
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource # used for REST API building
 from datetime import datetime
 from auth_middleware import token_required
-
-from model.fitnessy import Fitness
-
+from model.fitnessy import fitness
 fitness_api = Blueprint('fitness_api', __name__, url_prefix='/api/fitness')
-
 api = Api(fitness_api)
 
 class FitnessAPI:
     class _CRUD(Resource):
-        @token_required
-        def post(self, current_user):
+        def post(self):
             body = request.get_json()
-            name = body.get('name')
-            if name is None or len(name) < 2:
-                return {'message': f'Name is missing, or is less than 2 characters'}, 400
-            
-            # Adjustments for fitness data
-            age = body.get('age')
-            weight = body.get('weight')
-            height = body.get('height')
-            gender = body.get('gender')
-            activity_level = body.get('activity_level')
+            activity = body.get('activity')
+            calories_burned_per_hour = body.get('calories_burned_per_hour')
+            intensity_level = body.get('intensity_level')
+            equipment_needed = body.get('equipment_needed')
 
-            # Example validation
-            if age is None or age <= 0:
-                return {'message': 'Invalid age'}, 400
-            if weight is None or weight <= 0:
-                return {'message': 'Invalid weight'}, 400
-            if height is None or height <= 0:
-                return {'message': 'Invalid height'}, 400
-            if gender not in ['male', 'female']:
-                return {'message': 'Invalid gender'}, 400
-            if activity_level not in ['sedentary', 'lightly_active', 'moderately_active', 'very_active', 'extra_active']:
-                return {'message': 'Invalid activity level'}, 400
-            
-            # Create Fitness object
-            fitness_data = {
-                'name': name,
-                'age': age,
-                'weight': weight,
-                'height': height,
-                'gender': gender,
-                'activity_level': activity_level
-            }
-            new_fitness_record = Fitness(**fitness_data)
+            if not all([activity, calories_burned_per_hour, intensity_level, equipment_needed]):
+                return {'message': 'Missing required fields'}, 400
 
-            # Example: saving to database
-            new_fitness_record.save()
+            new_activity = fitness(activity=activity, calories_burned_per_hour=calories_burned_per_hour,
+                                            intensity_level=intensity_level, equipment_needed=equipment_needed)
+            new_activity.save()
 
-            return jsonify({'message': 'Fitness data saved successfully'}), 201
+            return jsonify(new_activity.serialize())
 
-        def get(self, current_user):
-            # Example: Retrieving fitness data
-            fitness_records = Fitness.query.all()
-            json_ready = [record.serialize() for record in fitness_records]
+        def get(self):
+            activities = fitness.query.all()
+            json_ready = [activity.serialize() for activity in activities]
             return jsonify(json_ready)
 
+        def delete(self):
+            body = request.get_json()
+            activity_name = body.get('activity')
+
+            activity =fitness.query.filter_by(activity=activity_name).first()
+
+            if activity:
+                activity.delete()
+                return {'message': f'{activity_name} deleted successfully'}
+            else:
+                return {'message': f'{activity_name} not found'}, 404
+
+    class _get(Resource):
+        def get(self, activity_name=None):
+            if activity_name:
+                activity = fitness.query.filter_by(activity=activity_name).first()
+                if activity:
+                    return jsonify(activity.serialize())
+                else:
+                    return {'message': 'Activity not found'}, 404
+            else:
+                return {'message': 'Please provide an activity name'}, 400
+
     api.add_resource(_CRUD, '/')
-
-
-
+    api.add_resource(_get, '/<string:activity_name>')

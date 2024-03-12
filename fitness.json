@@ -1,27 +1,12 @@
 [
-    {
-      "age": 30,
-      "finessname":"hi",    
-      "weight": 70.5,
-      "height": 175,
-      "gender": "male",
-      "activity_level": "active"
-    },
-    {
-      "age": 25,
-      "finessname":"h", 
-      "weight": 65.2,
-      "height": 162,
-      "gender": "female",
-      "activity_level": "sedentary"
-    },
-    {
-      "age": 40,
-      "finessname":"huu", 
-      "weight": 80.8,
-      "height": 180,
-      "gender": "male",
-      "activity_level": "moderate"
-    }
-  ]
-  
+    {"activity": "Running", "calories_burned_per_hour": 600, "intensity_level": 8, "equipment_needed": "Running shoes"},
+    {"activity": "Cycling", "calories_burned_per_hour": 500, "intensity_level": 7, "equipment_needed": "Bicycle"},
+    {"activity": "Swimming", "calories_burned_per_hour": 700, "intensity_level": 9, "equipment_needed": "Swimwear"},
+    {"activity": "Jump Rope", "calories_burned_per_hour": 800, "intensity_level": 8, "equipment_needed": "Jump rope"},
+    {"activity": "Yoga", "calories_burned_per_hour": 300, "intensity_level": 4, "equipment_needed": "Yoga mat"},
+    {"activity": "Weightlifting", "calories_burned_per_hour": 400, "intensity_level": 6, "equipment_needed": "Dumbbells"},
+    {"activity": "HIIT (High-intensity Interval Training)", "calories_burned_per_hour": 700, "intensity_level": 9, "equipment_needed": "None (bodyweight exercises)"},
+    {"activity": "Pilates", "calories_burned_per_hour": 250, "intensity_level": 3, "equipment_needed": "Pilates mat"},
+    {"activity": "CrossFit", "calories_burned_per_hour": 600, "intensity_level": 9, "equipment_needed": "Variety of equipment"},
+    {"activity": "Rowing", "calories_burned_per_hour": 600, "intensity_level": 8, "equipment_needed": "Rowing machine"}
+]

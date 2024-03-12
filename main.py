@@ -20,9 +20,9 @@ from api.sleep import sleep_api
 from model.users import initUsers
 from model.players import initPlayers
 from model.drinks import initDrinks
-from model.fitnessy import initFitnessy
 from model.pulses import initPulses 
 from model.sleeps import init_sleep
+from model.fitnessy import init_Fitnessy
 
 # setup App pages
 from projects.projects import app_projects # Blueprint directory import projects definition
@@ -67,10 +67,10 @@ custom_cli = AppGroup('custom', help='Custom commands')
 def generate_data():
     initUsers()
     initPlayers()
-    initFitnessy()
     initDrinks()
     initPulses()
     init_sleep()
+    init_fitnessy()
     
 
 # Register the custom command group with the Flask application
