@@ -1,38 +1,33 @@
-""" database dependencies to support sqliteDB examples """
-from random import randrange
-from datetime import date
-import os, base64
 import json
-
 from __init__ import app, db
 from sqlalchemy.exc import IntegrityError
-from werkzeug.security import generate_password_hash, check_password_hash
 
 class Fitness(db.Model):
-    __tablename__ = 'fitness_activities'
-    _Activity = db.Column(db.String(255), primary_key=True)
-    _CaloriesBurned = db.Column(db.Integer, unique=False, nullable=False)
+    __tablename__ = 'exercises'
 
-    def __init__(self, Activity, CaloriesBurned):
-        self._Activity = Activity
-        self._CaloriesBurned = CaloriesBurned
+    _exerciseName = db.Column(db.String(255), primary_key=True)
+    _calories_burned = db.Column(db.Integer, unique=False, nullable=False)
 
-    @property
-    def Activity(self):
-        return self._Activity
-
-    @Activity.setter
-    def Activity(self, Activity):
-        self._Activity = Activity
+    def __init__(self, exerciseName, calories_burned):
+        self._exerciseName = exerciseName
+        self._calories_burned = calories_burned
 
     @property
-    def CaloriesBurned(self):
-        return self._CaloriesBurned
-
-    @CaloriesBurned.setter
-    def CaloriesBurned(self, CaloriesBurned):
-        self._CaloriesBurned = CaloriesBurned
-
+    def exerciseName(self):
+        return self._exerciseName
+    
+    @exerciseName.setter
+    def exerciseName(self, exerciseName):
+        self._exerciseName = exerciseName
+    
+    @property
+    def calories_burned(self):
+        return self._calories_burned
+    
+    @calories_burned.setter
+    def calories_burned(self, calories_burned):
+        self._calories_burned = calories_burned
+          
     def __str__(self):
         return json.dumps(self.read())
 
@@ -47,40 +42,46 @@ class Fitness(db.Model):
 
     def read(self):
         return {
-            "Activity": self.Activity,
-            "CaloriesBurned": self.CaloriesBurned
+            "exerciseName": self.exerciseName,
+            "calories_burned": self.calories_burned
         }
 
-    def update(self, Activity="", CaloriesBurned=0):
-        if len(Activity) > 0:
-            self.Activity = Activity
-        if CaloriesBurned >= 0:
-            self.CaloriesBurned = CaloriesBurned
+    def update(self, exerciseName="", calories_burned=0):
+        if len(exerciseName) > 0:
+            self.exerciseName = exerciseName
+        if calories_burned >= 0:
+            self.calories_burned = calories_burned
         db.session.commit()
         return self
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+        return None
 
-def initfitnessy():
+"""Database Creation and Testing """
+
+def initFitnessy():
     with app.app_context():
+        """Create database and tables"""
         db.create_all()
-        activities_to_add = []
+
+        fitnessytoadd = []
         try:
-            with open(r'fitness_activities.json', 'r') as json_file:
+            with open(r'fitness.json','r') as json_file:
                 data = json.load(json_file)
         except Exception as error:
             print("failed")
+
         for item in data:
-            activity_to_add = Fitness(Activity=item['Activity'], CaloriesBurned=item['CaloriesBurned'])
-            activities_to_add.append(activity_to_add)
-        for activity in activities_to_add:
+            e_toadd = Fitness(exerciseName=item['activity'],calories_burned=item['calories_burned_per_hour']
+            )
+            fitnessytoadd.append(e_toadd)
+
+        """Builds sample exercise data"""
+        for e in fitnessytoadd:
             try:
-                activity.create()
+                e.create()
             except IntegrityError:
                 db.session.remove()
-                print(f"Records exist, duplicate activity, or error: {activity}")
-
-initfitnessy()
-
+                print(f"Records exist, duplicate or error: {e.fitnessyName}")

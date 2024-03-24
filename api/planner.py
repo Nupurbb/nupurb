@@ -4,7 +4,7 @@ from flask_restful import Api, Resource # used for REST API building
 from datetime import datetime
 from auth_middleware import token_required
 
-from model.fitness import Food, Exercise
+from model.planners import Food, Exercise
 
 fitness_api = Blueprint('fitness_api', __name__,
                    url_prefix='/api/fitness')
